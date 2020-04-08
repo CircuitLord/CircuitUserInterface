@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace CUI {
+namespace CUI.Components {
 
 
 	[Serializable]

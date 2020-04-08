@@ -43,6 +43,14 @@ namespace CUI {
 		}
 
 
+		public static void AnimateAll(List<CUIGroup> groups, bool showing = true, float totalTime = -1f) {
+
+			foreach (CUIGroup @group in groups) {
+				Animate(@group, showing);
+			}
+			
+		}
+
 		/// <summary>
 		/// Used to swap out two groups. One animates in, the other out.
 		/// </summary>

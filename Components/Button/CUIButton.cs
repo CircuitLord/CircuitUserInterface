@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-namespace CUI {
+namespace CUI.Components {
     
     
     [RequireComponent(typeof(Button))]
