@@ -17,7 +17,14 @@ namespace CUI {
 		
 		[SerializeField] private bool hideAtStart = false;
 
+		[Header("Animation Settings")] 
+		
+		[SerializeField] private bool childGroupsFollowState = false;
+		
+		
 		[SerializeField] public CUIAnimation showingAnimation = CUIAnimation.FadeIn;
+		
+		
 		
 		[SerializeField] public CUIAnimation hidingAnimation = CUIAnimation.FadeOut;
 		
@@ -37,6 +44,8 @@ namespace CUI {
 				return _rectTransform;
 			}
 		}
+
+		public bool isVisible = false;
 		
 		
 		private CanvasGroup _canvasGroup;
@@ -78,6 +87,9 @@ namespace CUI {
 		public virtual void OnShowing() {
 			if (isFirstOpen) OnInit();
 
+			if (isVisible) return;
+			isVisible = true;
+
 			//Trigger events in children
 			foreach (CUIGroup group in childGroups) {
 				group.OnShowing();
@@ -86,6 +98,9 @@ namespace CUI {
 		}
 
 		public virtual void OnHiding() {
+			
+			if (!isVisible) return;
+			isVisible = false;
 			
 			//Trigger events in children
 			foreach (CUIGroup group in childGroups) {

@@ -19,7 +19,11 @@ namespace CUI.Components {
 
 
 		[SerializeField] private bool startSelected = false;
-	
+
+		[Tooltip("If true, the toggle will look for a parent CUIToggleGroup to handle the toggling.")]
+		[SerializeField] private bool isInGroup = false;
+		
+		
 		[HideInInspector] public bool isSelected = false;
 	
 		[SceneObjectsOnly]
@@ -44,7 +48,10 @@ namespace CUI.Components {
 
 		private void Awake() {
 			button = GetComponent<Button>();
-			parent = transform.parent.GetComponent<CUIToggleGroup>();
+
+			if (isInGroup) {
+				parent = transform.GetComponentInParent<CUIToggleGroup>();
+			}
 		}
 
 		private void Start() {
@@ -54,10 +61,10 @@ namespace CUI.Components {
 		}
 
 
-		[Tooltip("Should be hooked up to whatever script you have to animate the activated state.")]
+		[Tooltip("Should be hooked up to whatever script you want to handle the activated state.")]
 		public UnityEvent onShouldActivate;
 	
-		[Tooltip("Should be hooked up to whatever script you have to animate the disabled state.")]
+		[Tooltip("Should be hooked up to whatever script you want to handle the deactivated state.")]
 		public UnityEvent onShouldDisable;
 
 
@@ -81,7 +88,14 @@ namespace CUI.Components {
 	
 	
 		public void Toggle() {
-			parent.OnChildToggled(this);
+
+			if (isInGroup) {
+				parent.OnChildToggled(this);
+			}
+			else {
+				if (isSelected) Deselect();
+				else Select();
+			}
 		}
 	
 

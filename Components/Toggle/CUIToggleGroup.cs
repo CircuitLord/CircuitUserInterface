@@ -86,12 +86,12 @@ namespace CUI.Components {
 			
 			toggles.Clear();
 
-			//CUIToggle[] found = GetComponentsInChildren<CUIToggle>();
+			CUIToggle[] found = GetComponentsInChildren<CUIToggle>();
 
-			foreach (Transform child in transform) {
-				CUIToggle found = child.GetComponent<CUIToggle>();
+			foreach (CUIToggle child in found) {
+				//CUIToggle found = child.GetComponent<CUIToggle>();
 				
-				if (found != null) toggles.Add(found);
+				if (child != null) toggles.Add(child);
 			}
 
 			if (!Application.isPlaying) Debug.Log(gameObject.name + " found " + toggles.Count +  " CUIToggles!");

@@ -10,14 +10,18 @@ namespace CUI.Layouts {
 		
 
 		[OnValueChanged("Solve")]
-		[SerializeField] private CUILayoutOrigin origin = CUILayoutOrigin.HorizontalCenter;
+		public  CUILayoutOrigin origin = CUILayoutOrigin.HorizontalCenter;
 
 		//[OnValueChanged("Solve")]
 		//[SerializeField] private bool forceExpandPos = true;
 
 
+		[HideIf("forceExpand")]
 		[OnValueChanged("Solve")]
 		[SerializeField] private float spacing = 10;
+
+
+		[SerializeField] private bool forceExpand = false;
 		
 		
 		
@@ -40,7 +44,7 @@ namespace CUI.Layouts {
 
 
 		[Button]
-		private void Solve() {
+		public void Solve() {
 
 			Vector2 totalSize = Vector2.zero;
 			
@@ -164,11 +168,18 @@ namespace CUI.Layouts {
 					continue;
 
 				}
+
+
+				float newSpacing = spacing;
 				
+				var layoutElement = child.GetComponent<CUILayoutElement>();
+				if (layoutElement != null && layoutElement.overridePadding) newSpacing = layoutElement.paddingOverride; 
+
+
 				RectTransform prev = children[i - 1];
 
-				float x = prev.anchoredPosition.x + (((prev.rect.width / 2f) + (spacing * 2f) + (child.rect.width / 2f)) * moveDir.x);
-				float y = prev.anchoredPosition.y + (((prev.rect.height / 2f) + (spacing * 2f) + (child.rect.height / 2f)) * moveDir.y);
+				float x = prev.anchoredPosition.x + (((prev.rect.width / 2f) + (newSpacing * 2f) + (child.rect.width / 2f)) * moveDir.x);
+				float y = prev.anchoredPosition.y + (((prev.rect.height / 2f) + (newSpacing * 2f) + (child.rect.height / 2f)) * moveDir.y);
 				
 				child.anchoredPosition = new Vector2(x, y);
 
