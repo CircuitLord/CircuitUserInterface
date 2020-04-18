@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Windows;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 
 namespace CUI {
 	public class CUIManager : MonoBehaviour {
@@ -45,8 +50,18 @@ namespace CUI {
 
 		public static void AnimateAll(List<CUIGroup> groups, bool showing = true, float totalTime = -1f) {
 
+			groups.First().StartCoroutine(_animateAll(groups, showing, totalTime));
+
+		}
+
+		private static IEnumerator _animateAll(List<CUIGroup> groups, bool showing = true, float totalTime = -1f) {
+			
+			
 			foreach (CUIGroup @group in groups) {
 				Animate(@group, showing);
+				
+				yield return new WaitForSeconds(totalTime / groups.Count);
+				
 			}
 			
 		}
@@ -254,10 +269,12 @@ namespace CUI {
 	public class CUIAnimationData {
 		//public string Name = "None";
 
-		[Title("@anim.ToString()")]
-		
-		public CUIAnimation anim = CUIAnimation.None;
+		[Title("@anim")]
 
+		//public CUIAnimation anim = CUIAnimation.None;
+
+		public string anim;
+		
 		[BoxGroup("Visibility")]
 		public bool changeVisibility = true;
 
@@ -279,6 +296,11 @@ namespace CUI {
 
 	[CreateAssetMenu(fileName = "CUIAnimationConfig", menuName = "CUI/AnimationConfig", order = 0)]
 	public class CUIAnimationConfig : ScriptableObject {
+
+		
+		//public string className = "CUIAnimationEnums";
+		
+		
 		[SerializeField] public List<CUIAnimationData> values = new List<CUIAnimationData>();
 
 
@@ -291,10 +313,27 @@ namespace CUI {
 		}
 		
 		[Button]
-		private void ValidateAnimations() {
+		private void GenerateCode() {
 			
 #if UNITY_EDITOR
 
+			string soSaveFolder = AssetDatabase.GetAssetPath(this);
+
+
+			string classDef = string.Empty;
+
+			classDef += "public enum " + "CUIAnimations" + " {" + Environment.NewLine;
+
+			foreach (CUIAnimationData data in values) {
+				classDef += "	" + data.anim + "," + Environment.NewLine;
+			}
+
+			classDef += "}" + Environment.NewLine;
+			
+			System.IO.File.WriteAllText(Path.Combine(Path.GetDirectoryName(soSaveFolder), "CUIAnimations_Generated" + ".cs"), classDef);
+
+
+			/*
 			foreach (CUIAnimationData data in values) {
 				if (data.anim.ToString().Contains("FadeIn")) {
 					data.changeVisibility = true;
@@ -304,9 +343,9 @@ namespace CUI {
 					data.changeVisibility = true;
 					data.show = false;
 				}
-			}
+			}*/
 
-			foreach (CUIAnimation anim in (CUIAnimation[]) Enum.GetValues(typeof(CUIAnimation))) {
+			/*foreach (CUIAnimation anim in (CUIAnimation[]) Enum.GetValues(typeof(CUIAnimation))) {
 				List<CUIAnimationData> found = values.FindAll(x => x.anim == anim);
 
 				if (found.Count <= 1) continue;
@@ -327,7 +366,7 @@ namespace CUI {
 					return;
 				}
 				
-			}
+			}*/
 
 #endif
 		}

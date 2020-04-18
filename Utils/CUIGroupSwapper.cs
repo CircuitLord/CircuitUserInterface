@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CUI;
 using Sirenix.OdinInspector;
@@ -15,6 +16,10 @@ namespace CUI.Utils {
 
 		[HideInInspector] public CUIGroup activeGroup;
 
+
+		private void Start() {
+			FindChildrenGroups();
+		}
 
 		[Button]
 		public void FindChildrenGroups() {

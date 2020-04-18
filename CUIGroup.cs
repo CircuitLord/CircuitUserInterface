@@ -45,7 +45,7 @@ namespace CUI {
 			}
 		}
 
-		public bool isVisible = false;
+		[HideInInspector] public bool isVisible = false;
 		
 		
 		private CanvasGroup _canvasGroup;
@@ -90,22 +90,28 @@ namespace CUI {
 			if (isVisible) return;
 			isVisible = true;
 
-			//Trigger events in children
-			foreach (CUIGroup group in childGroups) {
-				group.OnShowing();
+			if (childGroupsFollowState) {
+				//Trigger events in children
+				foreach (CUIGroup group in childGroups) {
+					group.OnShowing();
+				}
 			}
-			
+
 		}
 
 		public virtual void OnHiding() {
 			
 			if (!isVisible) return;
 			isVisible = false;
-			
-			//Trigger events in children
-			foreach (CUIGroup group in childGroups) {
-				group.OnHiding();
+
+
+			if (childGroupsFollowState) {
+				//Trigger events in children
+				foreach (CUIGroup group in childGroups) {
+					group.OnHiding();
+				}
 			}
+
 		}
 
 

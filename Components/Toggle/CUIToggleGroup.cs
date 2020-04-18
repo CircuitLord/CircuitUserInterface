@@ -17,6 +17,9 @@ namespace CUI.Components {
 	[DisallowMultipleComponent]
 	public class CUIToggleGroup : MonoBehaviour {
 
+		//[SerializeField] private int defaultIndex = 0;
+		
+
 		[Tooltip("Can more than one toggle be selected?")]
 		[SerializeField] private bool allowMultiSelect = false;
 		
@@ -32,17 +35,22 @@ namespace CUI.Components {
 		[HideInInspector] public List<CUIToggle> toggles = new List<CUIToggle>();
 
 
-		[HideInInspector] public int selectedIndex = 0;
+		[HideInInspector] public int selectedIndex { get; private set; } = 0;
 
 		[HideInInspector] public List<CUIToggle> selectedToggles;
 
 
-		private void Start() {
-			FindChildrenToggles();
+		private bool foundChildren = false;
+		
+		private void Awake() {
+			if (!foundChildren) {
+				FindChildrenToggles();
+				foundChildren = true;
+			}
 		}
 
 
-		public void OnChildToggled(CUIToggle toggle) {
+		public void OnChildToggled(CUIToggle toggle, bool notify = true) {
 
 			if (!allowDeselection && selectedToggles.Contains(toggle)) return;
 
@@ -70,10 +78,10 @@ namespace CUI.Components {
 			
 			selectedToggles.Add(toggle);
 			
-			onSelectedTogglesUpdated.Invoke();
+			if (notify) onSelectedTogglesUpdated.Invoke();
 
 			selectedIndex = toggle.transform.GetSiblingIndex();
-			onIndexSelected.Invoke(selectedIndex);
+			if (notify) onIndexSelected.Invoke(selectedIndex);
 
 
 		}
@@ -98,6 +106,23 @@ namespace CUI.Components {
 			
 			
 			
+		}
+
+
+		public void SelectIndex(int index) {
+			CUIToggle toggle = toggles[index];
+
+			if (toggle == null) return;
+			
+			OnChildToggled(toggles[index], true);
+		}
+		
+		public void SelectIndexWithoutNotify(int index) {
+			CUIToggle toggle = toggles[index];
+
+			if (toggle == null) return;
+			
+			OnChildToggled(toggles[index], false);
 		}
 	
 	

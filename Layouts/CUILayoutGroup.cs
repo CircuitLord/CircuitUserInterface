@@ -51,6 +51,7 @@ namespace CUI.Layouts {
 			children.Clear();
 
 			foreach (RectTransform t in transform) {
+				if (!t.gameObject.activeSelf) continue;
 				children.Add(t);
 				totalSize.x += t.rect.width;
 				totalSize.y += t.rect.height;

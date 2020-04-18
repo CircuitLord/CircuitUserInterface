@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CUI;
 using CUI.Actions;
+using DPInterface.SteamVR;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,8 +16,6 @@ using UnityEngine.UI;
 namespace CUI.Components {
 	[RequireComponent(typeof(Button))]
 	public class CUIToggle : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
-
-
 
 		[SerializeField] private bool startSelected = false;
 
@@ -56,34 +55,41 @@ namespace CUI.Components {
 
 		private void Start() {
 			Deselect(true);
-		
-			if (startSelected) Toggle();
+
+			if (startSelected) StartCoroutine(ToggleDelayed());
+		}
+
+		private IEnumerator ToggleDelayed() {
+			yield return null;
+			Toggle();
 		}
 
 
-		[Tooltip("Should be hooked up to whatever script you want to handle the activated state.")]
-		public UnityEvent onShouldActivate;
+		//[Tooltip("Should be hooked up to whatever script you want to handle the activated state.")]
+		//public UnityEvent onShouldActivate;
 	
-		[Tooltip("Should be hooked up to whatever script you want to handle the deactivated state.")]
-		public UnityEvent onShouldDisable;
+		//[Tooltip("Should be hooked up to whatever script you want to handle the deactivated state.")]
+		//public UnityEvent onShouldDisable;
+
+		public UnityBoolEvent onToggled;
 
 
 
-		public void Select(bool instant = false) {
+		public void Select(bool instant = false, bool silent = false) {
 			isSelected = true;
 
 			CUIActionHandler.Trigger(actionsOnActivated, instant);
 		
-			onShouldActivate.Invoke();
+			if (!silent) onToggled.Invoke(true);
 		}
 
 
-		public void Deselect(bool instant = false) {
+		public void Deselect(bool instant = false, bool silent = false) {
 			isSelected = false;
 		
 			CUIActionHandler.Untrigger(actionsOnActivated, instant);
 
-			onShouldDisable.Invoke();
+			if (!silent) onToggled.Invoke(false);
 		}
 	
 	
@@ -145,5 +151,17 @@ namespace CUI.Components {
 		
 			CUIActionHandler.Untrigger(actionsOnClick);
 		}
+
+
+		public void SetValue(bool state, bool instant = false) {
+			if (state) Select(instant, false);
+			else Deselect(instant, false);
+		}
+		
+		public void SetValueWithoutNotify(bool state, bool instant = false) {
+			if (state) Select(instant, true);
+			else Deselect(instant, true);
+		}
+		
 	}
 }
