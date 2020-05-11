@@ -80,7 +80,8 @@ namespace CUI.Components {
 			
 			if (notify) onSelectedTogglesUpdated.Invoke();
 
-			selectedIndex = toggle.transform.GetSiblingIndex();
+			//selectedIndex = toggle.transform.GetSiblingIndex();
+			selectedIndex = toggles.IndexOf(toggle);
 			if (notify) onIndexSelected.Invoke(selectedIndex);
 
 

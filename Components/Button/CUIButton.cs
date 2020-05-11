@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CUI.Actions;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -24,6 +25,10 @@ namespace CUI.Components {
         [SceneObjectsOnly]
         [ChildGameObjectsOnly(IncludeSelf = true)]
         [SerializeField] private List<CUIAction> actionsOnClick;
+
+        [SerializeField] private UnityEvent onDown;
+        [SerializeField] private UnityEvent onUp;
+        
         
         private bool isHovered = false;
 
@@ -48,10 +53,12 @@ namespace CUI.Components {
         
         public void OnPointerDown(PointerEventData eventData) {
             CUIActionHandler.Trigger(actionsOnClick);
+            onDown?.Invoke();
         }
 
         public void OnPointerUp(PointerEventData eventData) {
             CUIActionHandler.Untrigger(actionsOnClick);
+            onUp?.Invoke();
         }
     }
 }

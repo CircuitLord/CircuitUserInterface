@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CUI;
 using CUI.Actions;
-using DPInterface.SteamVR;
+using DPCore;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;

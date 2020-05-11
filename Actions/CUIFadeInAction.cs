@@ -9,9 +9,10 @@ using UnityEngine.UI;
 namespace CUI.Actions {
     public class CUIFadeInAction : CUIAction {
 
-        [SerializeField] private bool autoFetchTargetGraphic = true;
+       // [SerializeField] private bool autoFetchTargetGraphic = true;
         
-        [SerializeField] private Graphic targetGraphic;
+        private Graphic targetGraphic;
+        private CanvasGroup targetCanvasGroup;
 
         [Header("Fade Settings")] [SerializeField]
         private bool useGlobalAnimTime = true;
@@ -30,9 +31,8 @@ namespace CUI.Actions {
 
 
         private void Awake() {
-            if (autoFetchTargetGraphic) {
-                targetGraphic = GetComponent<Image>();
-            }
+            targetGraphic = GetComponent<Graphic>();
+            if (targetGraphic == null) targetCanvasGroup = GetComponent<CanvasGroup>();
         }
 
 
@@ -44,6 +44,14 @@ namespace CUI.Actions {
                 
                 if (instant) tween = targetGraphic.DOFade(triggeredOpacity, 0f);
                 else tween = targetGraphic.DOFade(triggeredOpacity, animTime).SetEase(easing);
+                
+                AddActiveTween(tween);
+            }
+            else if (targetCanvasGroup) {
+                Tweener tween;
+                
+                if (instant) tween = targetCanvasGroup.DOFade(triggeredOpacity, 0f);
+                else tween = targetCanvasGroup.DOFade(triggeredOpacity, animTime).SetEase(easing);
                 
                 AddActiveTween(tween);
             }
@@ -62,6 +70,15 @@ namespace CUI.Actions {
 
                 AddActiveTween(tween);
             }
+            else if (targetCanvasGroup) {
+                Tweener tween;
+                
+                if (instant) tween = targetCanvasGroup.DOFade(untriggeredOpacity, 0f);
+                else tween = targetCanvasGroup.DOFade(untriggeredOpacity, animTime).SetEase(easing);
+                
+                AddActiveTween(tween);
+            }
+
 
            
             return true;

@@ -30,6 +30,22 @@ namespace CUI.Actions {
 			}
 		}
 
+		/*public bool Trigger() {
+			return Trigger(false);
+		}
+
+		public bool Untrigger() {
+			return Untrigger(false);
+		}*/
+		public void TriggerNormal() {
+			Trigger();
+		}
+
+		public void UntriggerNormal() {
+			Untrigger();
+		}
+		
+
 
 		public virtual bool Trigger(bool instant = false) {
 			if (isTriggered) return false;
