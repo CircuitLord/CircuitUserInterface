@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using CUI;
 using CUI.Actions;
-using DPCore;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,6 +10,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
+
+public class UnityBoolEvent : UnityEvent<bool> {
+
+};
 
 
 namespace CUI.Components {
@@ -27,15 +30,15 @@ namespace CUI.Components {
 	
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIAction> actionsOnActivated = new List<CUIAction>();
+		[SerializeField] private List<CUIActionOLD> actionsOnActivated = new List<CUIActionOLD>();
 
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIAction> actionsOnHover;
+		[SerializeField] private List<CUIActionOLD> actionsOnHover;
 	
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIAction> actionsOnClick;
+		[SerializeField] private List<CUIActionOLD> actionsOnClick;
 
 
 		private CUIToggleGroup parent;
@@ -78,7 +81,7 @@ namespace CUI.Components {
 		public void Select(bool instant = false, bool silent = false) {
 			isSelected = true;
 
-			CUIActionHandler.Trigger(actionsOnActivated, instant);
+			//CUIActionHandler.Trigger(actionsOnActivated, instant);
 		
 			if (!silent) onToggled.Invoke(true);
 		}
@@ -87,7 +90,7 @@ namespace CUI.Components {
 		public void Deselect(bool instant = false, bool silent = false) {
 			isSelected = false;
 		
-			CUIActionHandler.Untrigger(actionsOnActivated, instant);
+			//CUIActionHandler.Untrigger(actionsOnActivated, instant);
 
 			if (!silent) onToggled.Invoke(false);
 		}
@@ -127,7 +130,7 @@ namespace CUI.Components {
 			if (isHovered) return;
 			isHovered = true;
             
-			CUIActionHandler.Trigger(actionsOnHover);
+			//CUIActionHandler.Trigger(actionsOnHover);
 
 		}
 
@@ -135,21 +138,21 @@ namespace CUI.Components {
 			if (!isHovered) return;
 			isHovered = false;
             
-			CUIActionHandler.Untrigger(actionsOnHover);
+			//CUIActionHandler.Untrigger(actionsOnHover);
 		}
 
 		public void OnPointerDown(PointerEventData eventData) {
 			if (isClicked) return;
 			isClicked = true;
 		
-			CUIActionHandler.Trigger(actionsOnClick);
+			//CUIActionHandler.Trigger(actionsOnClick);
 		}
 
 		public void OnPointerUp(PointerEventData eventData) {
 			if (!isClicked) return;
 			isClicked = false;
 		
-			CUIActionHandler.Untrigger(actionsOnClick);
+			//CUIActionHandler.Untrigger(actionsOnClick);
 		}
 
 

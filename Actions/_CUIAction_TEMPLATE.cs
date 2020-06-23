@@ -10,25 +10,19 @@ using UnityEngine.UI;
 
 namespace CUI.Actions {
 	
-	[RequireComponent(typeof(Graphic))]
-	public class CUIColorAction : CUIAction {
+	//[RequireComponent(typeof(Graphic))]
+	public class _CUIAction_TEMPLATE : CUIAction {
 
 
+		//Any properties with private and SerializeField
 
-		[SerializeField] private Color activatedColor = Color.white;
 
-		[SerializeField] private Color deactivatedColor = Color.black;
-		
-		
-
-		
-		
 		// --- Any components you need references to, with [HideInInspector] ---
-		[HideInInspector] public Graphic graphic;
+		
 
 		//Used to GetComponent to any references you need
 		protected void Reset() {
-			graphic = GetComponent<Graphic>();
+
 		}
 		
 
@@ -37,13 +31,13 @@ namespace CUI.Actions {
 			
 			//Apply the state instantly
 			if (instant) {
-				graphic.color = activatedColor;
+
 			}
 			
 			//Create tweens and use AddActiveTween()
 			else {
 				
-				AddActiveTween(graphic.DOColor(activatedColor, dur).SetEase(easing));
+				//AddActiveTween(graphic.DOColor(activatedColor, dur).SetEase(easing));
 
 				StartEditorTweens();
 			}
@@ -56,13 +50,13 @@ namespace CUI.Actions {
 			
 			//Apply the state instantly
 			if (instant) {
-				graphic.color = deactivatedColor;
+
 			}
 			
 			//Create tweens and use AddActiveTween()
 			else {
 				
-				AddActiveTween(graphic.DOColor(deactivatedColor, dur).SetEase(easing));
+				//AddActiveTween(graphic.DOColor(deactivatedColor, dur).SetEase(easing));
 
 				StartEditorTweens();
 			}

@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 namespace CUI.Actions {
-    public class CUISpinAction : CUIAction {
+    public class CuiMoveActionOld : CUIActionOLD {
         
         [SerializeField] private RectTransform targetRect;
 
@@ -19,9 +20,9 @@ namespace CUI.Actions {
         [SerializeField] private float animTime = 0.3f;
 
 
-        [SerializeField] private float triggeredRot = 90f;
+        [SerializeField] private Vector3 triggeredPos = Vector3.zero;
 
-        [SerializeField] private float untriggeredRot = 0f;
+        [SerializeField] private Vector3 untriggeredPos = Vector3.zero;
         
         
         
@@ -32,14 +33,25 @@ namespace CUI.Actions {
         }
 
 
+        private void Reset() {
+            triggeredPos = transform.localPosition;
+            untriggeredPos = transform.localPosition;
+        }
+
+        [Button]
+        private void SetTriggeredPos() {
+            triggeredPos = transform.localPosition;
+        }
+
+
         public override bool Trigger(bool instant = false) {
             if (!base.Trigger()) return false;
 
             if (targetRect) {
                 Tweener tween;
 
-                if (instant) tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, triggeredRot), 0f);
-                else tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, triggeredRot), animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOLocalMove(triggeredPos, 0f);
+                else tween = targetRect.DOLocalMove(triggeredPos, animTime).SetEase(easing);
                 
                 AddActiveTween(tween);
             }
@@ -53,8 +65,8 @@ namespace CUI.Actions {
             if (targetRect) {
                 Tweener tween;
                 
-                if (instant) tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, untriggeredRot), 0f);
-                else tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, untriggeredRot), animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOLocalMove(untriggeredPos, 0f);
+                else tween = targetRect.DOLocalMove(untriggeredPos, animTime).SetEase(easing);
 
                 AddActiveTween(tween);
             }
@@ -62,5 +74,6 @@ namespace CUI.Actions {
            
             return true;
         }
+        
     }
 }

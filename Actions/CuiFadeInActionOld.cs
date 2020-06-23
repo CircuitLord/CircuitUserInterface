@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 namespace CUI.Actions {
-    public class CUIFadeInAction : CUIAction {
+    public class CuiFadeInActionOld : CUIActionOLD {
 
        // [SerializeField] private bool autoFetchTargetGraphic = true;
         

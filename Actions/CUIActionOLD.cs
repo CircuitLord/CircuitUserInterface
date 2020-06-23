@@ -1,0 +1,100 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
+
+namespace CUI.Actions {
+	public abstract class CUIActionOLD : MonoBehaviour {
+
+		[SerializeField] private bool startTriggered = false;
+
+		[SerializeField] protected Ease easing = Ease.InOutCubic;
+		
+		
+		public bool isTriggered { get; protected set; } = false;
+
+		
+		private List<Tweener> tweens = new List<Tweener>();
+
+
+		protected virtual void Start() {
+			if (startTriggered) {
+				isTriggered = false;
+				Trigger(true);
+			}
+			else {
+				isTriggered = true;
+				Untrigger(true);
+			}
+		}
+
+		/*public bool Trigger() {
+			return Trigger(false);
+		}
+
+		public bool Untrigger() {
+			return Untrigger(false);
+		}*/
+		public void TriggerNormal() {
+			Trigger();
+		}
+
+		public void UntriggerNormal() {
+			Untrigger();
+		}
+		
+
+
+		public virtual bool Trigger(bool instant = false) {
+			if (isTriggered) return false;
+			
+			isTriggered = true;
+			
+			KillTweens();
+			//Debug.Log("killed tweens");
+
+			return true;
+		}
+
+		public virtual bool Untrigger(bool instant = false) {
+
+			if (!isTriggered) return false;
+			
+			isTriggered = false;
+			
+			KillTweens();
+
+			return true;
+		}
+
+
+		protected void AddActiveTween(Tweener tween) {
+			//if (tweens.Contains(tween)) return;
+			
+			tweens.Add(tween);
+
+			tween.onComplete += () => {
+				RemoveActiveTween(tween);
+			};
+
+
+		}
+
+		private void RemoveActiveTween(Tweener tween) {
+			if (!tweens.Contains(tween)) return;
+			tweens.Remove(tween);
+		}
+
+		public void KillTweens() {
+			foreach (Tweener tween in tweens) {
+				tween?.Kill();
+			}
+			
+			tweens.Clear();
+			
+		}
+		
+
+	}
+}

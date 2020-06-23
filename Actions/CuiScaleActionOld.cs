@@ -2,13 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 namespace CUI.Actions {
-    public class CUIMoveAction : CUIAction {
+    public class CuiScaleActionOld : CUIActionOLD {
         
         [SerializeField] private RectTransform targetRect;
 
@@ -20,9 +19,9 @@ namespace CUI.Actions {
         [SerializeField] private float animTime = 0.3f;
 
 
-        [SerializeField] private Vector3 triggeredPos = Vector3.zero;
+        [SerializeField] private float triggeredScale = 1.05f;
 
-        [SerializeField] private Vector3 untriggeredPos = Vector3.zero;
+        [SerializeField] private float untriggeredScale = 1f;
         
         
         
@@ -32,15 +31,8 @@ namespace CUI.Actions {
             if (!targetRect) targetRect = GetComponent<RectTransform>();
         }
 
-
         private void Reset() {
-            triggeredPos = transform.localPosition;
-            untriggeredPos = transform.localPosition;
-        }
-
-        [Button]
-        private void SetTriggeredPos() {
-            triggeredPos = transform.localPosition;
+            if (!targetRect) targetRect = GetComponent<RectTransform>();
         }
 
 
@@ -50,8 +42,8 @@ namespace CUI.Actions {
             if (targetRect) {
                 Tweener tween;
 
-                if (instant) tween = targetRect.DOLocalMove(triggeredPos, 0f);
-                else tween = targetRect.DOLocalMove(triggeredPos, animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOScale(triggeredScale, 0f);
+                else tween = targetRect.DOScale(triggeredScale, animTime).SetEase(easing);
                 
                 AddActiveTween(tween);
             }
@@ -65,8 +57,8 @@ namespace CUI.Actions {
             if (targetRect) {
                 Tweener tween;
                 
-                if (instant) tween = targetRect.DOLocalMove(untriggeredPos, 0f);
-                else tween = targetRect.DOLocalMove(untriggeredPos, animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOScale(untriggeredScale, 0f);
+                else tween = targetRect.DOScale(untriggeredScale, animTime).SetEase(easing);
 
                 AddActiveTween(tween);
             }
@@ -74,6 +66,5 @@ namespace CUI.Actions {
            
             return true;
         }
-        
     }
 }

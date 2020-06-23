@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using CUI.Actions;
 using Sirenix.OdinInspector;
@@ -9,56 +9,71 @@ using UnityEngine.UI;
 
 
 namespace CUI.Components {
-    
-    
-    [RequireComponent(typeof(Button))]
-    public class CUIButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
-        
-
-        private Button button;
+	[RequireComponent(typeof(Button))]
+	public class CUIButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
+		// [SerializeField] private List<CUIAction> actions;
 
 
-        [SceneObjectsOnly]
-        [ChildGameObjectsOnly(IncludeSelf = true)]
-        [SerializeField] private List<CUIAction> actionsOnHover;
+		[OnValueChanged("OnPreview")] [SerializeField]
+		[PropertyRange(0, 3)]
+		private int previewState = 0;
 
-        [SceneObjectsOnly]
-        [ChildGameObjectsOnly(IncludeSelf = true)]
-        [SerializeField] private List<CUIAction> actionsOnClick;
 
-        [SerializeField] private UnityEvent onDown;
-        [SerializeField] private UnityEvent onUp;
-        
-        
-        private bool isHovered = false;
+		public void OnPreview() {
+			switch (previewState) {
+				case 0: 
+					CUIActionHandler.Activate(actionsOnHoverStart);
+					break;
+				case 1: 
+					CUIActionHandler.Activate(actionsOnHoverEnd);
+					break;
+				case 2: 
+					CUIActionHandler.Activate(actionsOnDown);
+					break;
+				case 3: 
+					CUIActionHandler.Activate(actionsOnUp);
+					break;
+			}
+		}
 
-        private void Awake() {
-            button = GetComponent<Button>();
-        }
+		[SerializeField] private List<CUIActionRef> actionsOnHoverStart;
 
-        public void OnPointerEnter(PointerEventData eventData) {
-            if (isHovered) return;
-            isHovered = true;
-            
-            CUIActionHandler.Trigger(actionsOnHover);
+		[SerializeField] private List<CUIActionRef> actionsOnHoverEnd;
 
-        }
+		[SerializeField] private List<CUIActionRef> actionsOnDown;
 
-        public void OnPointerExit(PointerEventData eventData) {
-            if (!isHovered) return;
-            isHovered = false;
-            
-            CUIActionHandler.Untrigger(actionsOnHover);
-        }
-        
-        public void OnPointerDown(PointerEventData eventData) {
-            CUIActionHandler.Trigger(actionsOnClick);
-            onDown?.Invoke();
-        }
+		[SerializeField] private List<CUIActionRef> actionsOnUp;
 
-        public void OnPointerUp(PointerEventData eventData) {
-            CUIActionHandler.Untrigger(actionsOnClick);
-            onUp?.Invoke();
-        }
-    }
-}
+
+		[SerializeField] [HideInInspector] private Button button;
+
+
+		private bool isHovered = false;
+
+		private void Awake() {
+			button = GetComponent<Button>();
+		}
+
+		public void OnPointerEnter(PointerEventData eventData) {
+			if (isHovered) return;
+			isHovered = true;
+
+			CUIActionHandler.Activate(actionsOnHoverStart);
+		}
+
+		public void OnPointerExit(PointerEventData eventData) {
+			if (!isHovered) return;
+			isHovered = false;
+
+			CUIActionHandler.Activate(actionsOnHoverEnd);
+		}
+
+		public void OnPointerDown(PointerEventData eventData) {
+			CUIActionHandler.Activate(actionsOnDown);
+		}
+
+		public void OnPointerUp(PointerEventData eventData) {
+			CUIActionHandler.Activate(actionsOnUp);
+		}
+	}
+}*/

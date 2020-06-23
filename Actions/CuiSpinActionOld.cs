@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 namespace CUI.Actions {
-    public class CUIScaleAction : CUIAction {
+    public class CuiSpinActionOld : CUIActionOLD {
         
         [SerializeField] private RectTransform targetRect;
 
@@ -19,19 +19,15 @@ namespace CUI.Actions {
         [SerializeField] private float animTime = 0.3f;
 
 
-        [SerializeField] private float triggeredScale = 1.05f;
+        [SerializeField] private float triggeredRot = 90f;
 
-        [SerializeField] private float untriggeredScale = 1f;
+        [SerializeField] private float untriggeredRot = 0f;
         
         
         
 
 
         private void Awake() {
-            if (!targetRect) targetRect = GetComponent<RectTransform>();
-        }
-
-        private void Reset() {
             if (!targetRect) targetRect = GetComponent<RectTransform>();
         }
 
@@ -42,8 +38,8 @@ namespace CUI.Actions {
             if (targetRect) {
                 Tweener tween;
 
-                if (instant) tween = targetRect.DOScale(triggeredScale, 0f);
-                else tween = targetRect.DOScale(triggeredScale, animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, triggeredRot), 0f);
+                else tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, triggeredRot), animTime).SetEase(easing);
                 
                 AddActiveTween(tween);
             }
@@ -57,8 +53,8 @@ namespace CUI.Actions {
             if (targetRect) {
                 Tweener tween;
                 
-                if (instant) tween = targetRect.DOScale(untriggeredScale, 0f);
-                else tween = targetRect.DOScale(untriggeredScale, animTime).SetEase(easing);
+                if (instant) tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, untriggeredRot), 0f);
+                else tween = targetRect.DOLocalRotate(new Vector3(0f, 0f, untriggeredRot), animTime).SetEase(easing);
 
                 AddActiveTween(tween);
             }
