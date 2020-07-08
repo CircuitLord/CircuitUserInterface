@@ -9,41 +9,40 @@ using UnityEngine.UI;
 
 namespace CUI.Actions {
 	
-	[RequireComponent(typeof(Graphic))]
-	public class CUIColorAction : CUIAction {
+	[RequireComponent(typeof(CanvasGroup))]
+	public class CUICanvasGroupAction : CUIAction {
 
+
+		//Any properties with private and SerializeField
+		[SerializeField] public float activatedFade = 1f;
+		[SerializeField] public float deactivatedFade = 0f;
+		
 		
 
-		[SerializeField] private Color activatedColor = Color.white;
 
-		[SerializeField] private Color deactivatedColor = Color.black;
-		
-		
-
-		
-		
 		// --- Any components you need references to, with [HideInInspector] ---
-		[HideInInspector] [SerializeField] private Graphic graphic;
+		[HideInInspector] public CanvasGroup canvasGroup;
+		
 
 		//Used to GetComponent to any references you need
 		protected void Reset() {
-			graphic = GetComponent<Graphic>();
+			canvasGroup = GetComponent<CanvasGroup>();
 		}
 		
 
 		public override bool Activate(bool instant = false, bool force = false) {
 			if (!base.Activate(instant, force)) return false;
-			
+
 			//Apply the state instantly
 			if (instant) {
-				graphic.color = activatedColor;
+				canvasGroup.alpha = activatedFade;
 			}
 			
 			//Create tweens and use AddActiveTween()
 			else {
-				
-				AddActiveTween(graphic.DOColor(activatedColor, dur).SetEase(easing));
 
+				AddActiveTween(canvasGroup.DOFade(activatedFade, dur).SetEase(easing));
+				
 				StartEditorTweens();
 			}
 			
@@ -55,14 +54,14 @@ namespace CUI.Actions {
 			
 			//Apply the state instantly
 			if (instant) {
-				graphic.color = deactivatedColor;
+				canvasGroup.alpha = deactivatedFade;
 			}
 			
 			//Create tweens and use AddActiveTween()
 			else {
-				
-				AddActiveTween(graphic.DOColor(deactivatedColor, dur).SetEase(easing));
 
+				AddActiveTween(canvasGroup.DOFade(deactivatedFade, dur).SetEase(easing));
+				
 				StartEditorTweens();
 			}
 			

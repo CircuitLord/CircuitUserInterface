@@ -9,57 +9,45 @@ using UnityEngine.UI;
 
 namespace CUI.Actions {
 	
-	//[RequireComponent(typeof(Graphic))]
-	public class _CUIAction_TEMPLATE : CUIAction {
+	[RequireComponent(typeof(CUIGroup))]
+	public class CUIGroupAction : CUIAction {
 
 
 		//Any properties with private and SerializeField
-
+		[SerializeField] private bool invertShowingHiding = false;
+		
 
 		// --- Any components you need references to, with [HideInInspector] ---
+		[HideInInspector]
+		[SerializeField] private CUIGroup group;
+		
 		
 
 		//Used to GetComponent to any references you need
 		protected void Reset() {
-
+			group = GetComponent<CUIGroup>();
 		}
 		
 
 		public override bool Activate(bool instant = false, bool force = false) {
 			if (!base.Activate(instant, force)) return false;
-			
-			//Apply the state instantly
-			if (instant) {
 
-			}
+			bool showing = true;
+			if (invertShowingHiding) showing = false;
 			
-			//Create tweens and use AddActiveTween()
-			else {
-				
-				//AddActiveTween(graphic.DOColor(activatedColor, dur).SetEase(easing));
+			CUIManager.Animate(group, showing, -1f, instant);
 
-				StartEditorTweens();
-			}
-			
 			return true;
 		}
 
 		public override bool Deactivate(bool instant = false, bool force = false) {
 			if (!base.Deactivate(instant, force)) return false;
 			
-			//Apply the state instantly
-			if (instant) {
-
-			}
+			bool showing = false;
+			if (invertShowingHiding) showing = true;
 			
-			//Create tweens and use AddActiveTween()
-			else {
-				
-				//AddActiveTween(graphic.DOColor(deactivatedColor, dur).SetEase(easing));
+			CUIManager.Animate(group, showing, -1f, instant);
 
-				StartEditorTweens();
-			}
-			
 			return true;
 		}
 

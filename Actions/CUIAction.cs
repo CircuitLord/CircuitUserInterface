@@ -15,7 +15,7 @@ namespace CUI.Actions {
 
 		[SerializeField] protected Ease easing = Ease.InOutCubic;
 
-		[SerializeField] protected float duration = 0.3f;
+		[SerializeField] public float duration = 0.3f;
 		
 
 		
@@ -24,102 +24,25 @@ namespace CUI.Actions {
 
 		protected float dur = 0.3f;
 
-		[OnValueChanged("@Toggle(false, true)")]
-		[SerializeField] protected bool isActivated = false;
+		[OnValueChanged("IsActivatedChanged")]
+		[SerializeField] public bool isActivated = false;
 
 		private bool isActivatedPrevious = false;
 
-		/*[PropertyOrder(0)]
-		[LabelText("@states.Count > 0 ? states[0].name : \"\"")]
-		[ShowIf("@states.Count > 0")]
-		[HorizontalGroup("States")]
-		[Button]
-		public void State0() {
-			ActivateIndex(0, false, true);
+
+		private void IsActivatedChanged() {
+			if (isActivated) Activate(false, true);
+			else Deactivate(false, true);
 		}
-		
-		[LabelText("@states.Count > 1 ? states[1].name : \"\"")]
-		[ShowIf("@states.Count > 1")]
-		[HorizontalGroup("States")]
-		[Button]
-		public void State1() {
-			ActivateIndex(1, false, true);
-		}
-		
-		[LabelText("@states.Count > 2 ? states[2].name : \"\"")]
-		[ShowIf("@states.Count > 2")]
-		[HorizontalGroup("States")]
-		[Button]
-		public void State2() {
-			ActivateIndex(2, false, true);
-		}
-		
-		[LabelText("@states.Count > 3 ? states[3].name : \"\"")]
-		[ShowIf("@states.Count > 3")]
-		[HorizontalGroup("States")]
-		[Button]
-		public void State3() {
-			ActivateIndex(3, false, true);
-		}
-		
-		[LabelText("@states.Count > 4 ? states[4].name : \"\"")]
-		[ShowIf("@states.Count > 4")]
-		[HorizontalGroup("States")]
-		[Button]
-		public void State4() {
-			ActivateIndex(4, false, true);
-		}*/
-
-		/*[PropertyOrder(1)]
-		[OnCollectionChanged("SetupStates")]
-		[TableList]*/
-		/*[SerializeField]
-		[HideInInspector]
-		public List<CUIActionState> basicStates = new List<CUIActionState>();*/
-
-
-
-		/*
-		[ReadOnly]
-		public int currentIndex = 0;*/
-
-
-
-
-		/*
-		protected void SetupStates() {
-			foreach (CUIActionState state in basicStates) {
-				state.GetReferences(gameObject);
-			}
-		}
-		*/
-
-
-
-		/*public virtual bool ActivateIndex(int index, bool instant = false, bool force = false) {
-
-			if (basicStates.Count <= index) return false;
-
-			if (currentIndex == index && !force) return false;
-
-			currentIndex = index;
-			
-			KillTweens();
-			
-			dur = instant ? 0f : duration;
-
-			return true;
-		}*/
 
 		public void Toggle(bool instant = false, bool force = false) {
-			if (isActivatedPrevious) Deactivate(instant, force);
+			if (isActivated) Deactivate(instant, force);
 			else Activate(instant, force);
 
-			isActivatedPrevious = isActivated;
+			//isActivatedPrevious = isActivated;
 		}
 		
-
-
+		
 		public void ActivateNormal() {
 			Activate(false, false);
 		}
@@ -157,7 +80,7 @@ namespace CUI.Actions {
 
 
 		protected void AddActiveTween(Tweener tween) {
-			//if (tweens.Contains(tween)) return;
+			if (tweens.Contains(tween)) return;
 			
 			tweens.Add(tween);
 
@@ -179,7 +102,6 @@ namespace CUI.Actions {
 			}
 			
 			tweens.Clear();
-
 		}
 
 		protected void StartEditorTweens() {
@@ -192,57 +114,4 @@ namespace CUI.Actions {
 
 	}
 
-
-	/*
-	[Serializable]
-	public class CUIActionState {
-		
-		//public int index = 0;
-		
-		public string name;
-		
-		[HideInInspector] public bool isActive = false;
-
-		[Button]
-		[LabelText("Set")]
-		[TableColumnWidth(30, Resizable = false)]
-		public virtual void Set() {
-			
-		}
-
-		/// <summary>
-		/// Should assign any references to components the state needs.
-		/// </summary>
-		/// <param name="go"></param>
-		public virtual void GetReferences(GameObject go) {
-			
-		}
-
-		/*[Button]
-		[DisableIf(@"isActive")]
-		private void Activate() {
-			
-		}#1#
-
-	}
-	
-	
-	[Serializable]
-	public class CUIActionRef {
-
-		public CUIAction action;
-		
-		
-		[LabelText("@action != null ? \"State: \" + action.basicStates[index].name : \"State: None\"")]
-		[PropertyRange(0, "@action != null ? action.basicStates.Count - 1 : 0")]
-		public int index;
-		
-		
-		
-		
-
-	}
-	*/
-	
-	
 }

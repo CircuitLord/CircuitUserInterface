@@ -1,7 +1,8 @@
 {
     "name": "CUI",
     "references": [
-        "DOTween.Modules"
+        "DOTween.Modules",
+        "Unity.EditorCoroutines.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

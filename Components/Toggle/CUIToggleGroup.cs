@@ -25,11 +25,13 @@ namespace CUI.Components {
 		
 		[Tooltip("Can a toggle be deselected by clicking on it?")]
 		[SerializeField] private bool allowDeselection = false;
-
+		
 
 		public UnityEvent onSelectedTogglesUpdated;
 
 		public UnityIntEvent onIndexSelected;
+
+		[SerializeField] private int defaultIndex = -1;
 		
 	
 		[HideInInspector] public List<CUIToggle> toggles = new List<CUIToggle>();
@@ -49,14 +51,27 @@ namespace CUI.Components {
 			}
 		}
 
+		private void Start() {
+			
+			selectedToggles.Clear();
+			
+			if (defaultIndex > -1) {
+				if (toggles.Count > defaultIndex) {
+					
+					OnChildToggled(toggles[defaultIndex], false, true);
+					
+				}
+			}
+		}
 
-		public void OnChildToggled(CUIToggle toggle, bool notify = true) {
 
-			if (!allowDeselection && selectedToggles.Contains(toggle)) return;
+		public void OnChildToggled(CUIToggle toggle, bool notify = true, bool instant = false, bool force = false) {
+
+			if (!allowDeselection && selectedToggles.Contains(toggle) && !force) return;
 
 			//If we allow deselection, disable the toggle that was clicked on
 			if (allowDeselection && toggle.isSelected) {
-				toggle.Deselect();
+				toggle.Deselect(instant);
 				return;
 			}
 
@@ -66,7 +81,7 @@ namespace CUI.Components {
 				foreach (CUIToggle other in selectedToggles) {
 					if (other == null) continue;
 					if (!other.isSelected) continue;
-					other.Deselect();
+					other.Deselect(instant);
 				}
 				
 				selectedToggles.Clear();
@@ -74,7 +89,7 @@ namespace CUI.Components {
 			
 			//Select the right one:
 
-			toggle.Select();
+			toggle.Select(instant);
 			
 			selectedToggles.Add(toggle);
 			

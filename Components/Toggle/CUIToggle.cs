@@ -30,23 +30,44 @@ namespace CUI.Components {
 	
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIActionOLD> actionsOnActivated = new List<CUIActionOLD>();
+		[SerializeField] private List<CUIAction> actionsOnActivated = new List<CUIAction>();
 
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIActionOLD> actionsOnHover;
+		[SerializeField] private List<CUIAction> actionsOnHover;
 	
 		[SceneObjectsOnly]
 		[ChildGameObjectsOnly(IncludeSelf = true)]
-		[SerializeField] private List<CUIActionOLD> actionsOnClick;
+		[SerializeField] private List<CUIAction> actionsOnClick;
 
 
 		private CUIToggleGroup parent;
 
 		private Button button;
 
-		private bool isHovered = false;
+		[ReadOnly]
+		bool isHovered = false;
+		
+		[ReadOnly]
 		private bool isClicked = false;
+		
+		[Button]
+		private void PreviewHover() {
+			if (!Application.isEditor) return;
+			if (isHovered) OnPointerExit(null);
+			else OnPointerEnter(null);
+		}
+		
+		[Button]
+		private void PreviewPress() {
+			if (!Application.isEditor) return;
+			/*if (isClicked) OnPointerUp(null);
+			else OnPointerDown(null);*/
+			Toggle();
+		}
+		
+		
+		
 
 		private void Awake() {
 			button = GetComponent<Button>();
@@ -57,9 +78,11 @@ namespace CUI.Components {
 		}
 
 		private void Start() {
-			Deselect(true);
 
-			if (startSelected) StartCoroutine(ToggleDelayed());
+			if (startSelected) {
+				Deselect(true);
+				StartCoroutine(ToggleDelayed());
+			}
 		}
 
 		private IEnumerator ToggleDelayed() {
@@ -74,32 +97,34 @@ namespace CUI.Components {
 		//[Tooltip("Should be hooked up to whatever script you want to handle the deactivated state.")]
 		//public UnityEvent onShouldDisable;
 
-		public UnityBoolEvent onToggled;
+		public UnityBoolEvent onToggled = new UnityBoolEvent();
 
 
 
 		public void Select(bool instant = false, bool silent = false) {
 			isSelected = true;
 
-			//CUIActionHandler.Trigger(actionsOnActivated, instant);
+			CUIActionHandler.Activate(actionsOnActivated, instant);
 		
-			if (!silent) onToggled.Invoke(true);
+			if (!silent) onToggled?.Invoke(true);
 		}
 
 
 		public void Deselect(bool instant = false, bool silent = false) {
 			isSelected = false;
 		
-			//CUIActionHandler.Untrigger(actionsOnActivated, instant);
+			CUIActionHandler.Deactivate(actionsOnActivated, instant);
 
-			if (!silent) onToggled.Invoke(false);
+			if (!silent) onToggled?.Invoke(false);
 		}
 	
 	
 		public void Toggle() {
 
 			if (isInGroup) {
-				parent.OnChildToggled(this);
+				if (parent == null) parent = transform.parent.GetComponent<CUIToggleGroup>();
+				if (parent == null) parent = transform.parent.parent.GetComponent<CUIToggleGroup>();
+				parent.OnChildToggled(this, true, false, true);
 			}
 			else {
 				if (isSelected) Deselect();
@@ -130,7 +155,7 @@ namespace CUI.Components {
 			if (isHovered) return;
 			isHovered = true;
             
-			//CUIActionHandler.Trigger(actionsOnHover);
+			CUIActionHandler.Activate(actionsOnHover);
 
 		}
 
@@ -138,21 +163,23 @@ namespace CUI.Components {
 			if (!isHovered) return;
 			isHovered = false;
             
-			//CUIActionHandler.Untrigger(actionsOnHover);
+			CUIActionHandler.Deactivate(actionsOnHover);
 		}
 
 		public void OnPointerDown(PointerEventData eventData) {
 			if (isClicked) return;
 			isClicked = true;
-		
-			//CUIActionHandler.Trigger(actionsOnClick);
+				
+			
+			Toggle();
+			//CUIActionHandler.Activate(actionsOnClick);
 		}
 
 		public void OnPointerUp(PointerEventData eventData) {
 			if (!isClicked) return;
 			isClicked = false;
-		
-			//CUIActionHandler.Untrigger(actionsOnClick);
+			
+			//CUIActionHandler.Deactivate(actionsOnClick);
 		}
 
 

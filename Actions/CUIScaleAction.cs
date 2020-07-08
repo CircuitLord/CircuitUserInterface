@@ -9,35 +9,33 @@ using UnityEngine.UI;
 
 namespace CUI.Actions {
 	
-	//[RequireComponent(typeof(Graphic))]
-	public class _CUIAction_TEMPLATE : CUIAction {
+	[RequireComponent(typeof(Transform))]
+	public class CUIScaleAction : CUIAction {
 
 
 		//Any properties with private and SerializeField
+		[SerializeField] private Vector3 activatedScale = Vector3.one;
 
-
-		// --- Any components you need references to, with [HideInInspector] ---
+		[Space]
+		
+		[SerializeField] private Vector3 deactivatedScale = Vector3.one;
 		
 
-		//Used to GetComponent to any references you need
-		protected void Reset() {
 
-		}
-		
 
 		public override bool Activate(bool instant = false, bool force = false) {
 			if (!base.Activate(instant, force)) return false;
 			
-			//Apply the state instantly
 			if (instant) {
-
+				transform.localScale = activatedScale;
 			}
-			
-			//Create tweens and use AddActiveTween()
-			else {
-				
-				//AddActiveTween(graphic.DOColor(activatedColor, dur).SetEase(easing));
 
+			else {
+				if (activatedScale != transform.localScale) {
+					AddActiveTween(transform.DOScale(activatedScale, dur).SetEase(easing));
+				}
+
+				
 				StartEditorTweens();
 			}
 			
@@ -47,16 +45,16 @@ namespace CUI.Actions {
 		public override bool Deactivate(bool instant = false, bool force = false) {
 			if (!base.Deactivate(instant, force)) return false;
 			
-			//Apply the state instantly
 			if (instant) {
-
+				transform.localScale = deactivatedScale;
 			}
-			
-			//Create tweens and use AddActiveTween()
-			else {
-				
-				//AddActiveTween(graphic.DOColor(deactivatedColor, dur).SetEase(easing));
 
+			else {
+				if (deactivatedScale != transform.localScale) {
+					AddActiveTween(transform.DOScale(deactivatedScale, dur).SetEase(easing));
+				}
+
+							
 				StartEditorTweens();
 			}
 			

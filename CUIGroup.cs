@@ -17,6 +17,9 @@ namespace CUI {
 		
 		[SerializeField] private bool hideAtStart = false;
 
+		[SerializeField] public bool disableCanvasWhenHidden = true;
+		
+
 		[Header("Animation Settings")] 
 		
 		[SerializeField] private bool childGroupsFollowState = false;

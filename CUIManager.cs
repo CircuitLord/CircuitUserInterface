@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CUI.DOTweenUtil;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -84,13 +85,20 @@ namespace CUI {
 		public static void Animate(CUIGroup view, bool showing = true, float overrideTime = -1f, bool instant = false) {
 			CUIAnimation anim;
 
-			if (showing) anim = view.showingAnimation;
-			else anim = view.hidingAnimation;
-
+			if (showing) {
+				if (instant) anim = CUIAnimation.InstantIn;
+				else anim = view.showingAnimation;
+			}
+			else {
+				if (instant) anim = CUIAnimation.InstantOut;
+				else anim = view.hidingAnimation;
+			}
+			
+			
 			I.AnimateInternal(view, anim, overrideTime);
 		}
 
-		public static void Animate(CUIGroup view, CUIAnimation anim, float overrideTime = -1f, bool instant = false) {
+		public static void Animate(CUIGroup view, CUIAnimation anim, float overrideTime = -1f) {
 			I.AnimateInternal(view, anim, overrideTime);
 		}
 
@@ -119,8 +127,19 @@ namespace CUI {
 				case CUIAnimation.FadeIn:
 					state.isShowing = true;
 					break;
+				
 				case CUIAnimation.FadeOut:
 					state.isShowing = false;
+					break;
+				
+				case CUIAnimation.InstantIn:
+					state.isShowing = true;
+					state.isInstant = true;
+					break;
+				
+				case CUIAnimation.InstantOut:
+					state.isShowing = false;
+					state.isInstant = true;
 					break;
 
 
@@ -150,7 +169,7 @@ namespace CUI {
 
 			//POSITION ANIMATION
 			if (posAmt != Vector3.zero) {
-				Tweener posTween;
+				Tween posTween;
 
 				//If we're showing, posAmt + curPos is the starting position for the animation, and the current pos is the end.
 				if (state.isShowing) {
@@ -162,7 +181,7 @@ namespace CUI {
 					posTween = cuiGroup.rectTransform.DOLocalMove(curPos + posAmt, animTime).SetEase(animEasing);
 				}
 
-				state.tweeners.Add(posTween);
+				state.tweens.Add(posTween);
 			}
 
 			//SCALING ANIMATION
@@ -172,10 +191,24 @@ namespace CUI {
 
 			//FADING ANIMATION
 			if (state.isChangingVisibility && state.isShowing) {
-				state.tweeners.Add(state.cuiGroup.canvasGroup.DOFade(1f, state.animLength));
+
+				if (state.isInstant) {
+					state.cuiGroup.canvasGroup.alpha = 1f;
+				}
+				else {
+					state.tweens.Add(state.cuiGroup.canvasGroup.DOFade(1f, state.animLength));
+				}
+
 			}
 			else if (state.isChangingVisibility) {
-				state.tweeners.Add(state.cuiGroup.canvasGroup.DOFade(0f, state.animLength));
+				
+				if (state.isInstant) {
+					state.cuiGroup.canvasGroup.alpha = 0f;
+				}
+				else {
+					state.tweens.Add(state.cuiGroup.canvasGroup.DOFade(0f, state.animLength));
+				}
+
 			}
 
 
@@ -190,8 +223,8 @@ namespace CUI {
 			if (existingState != null) {
 				currentAnimations.Remove(existingState);
 
-				foreach (Tweener tweener in existingState.tweeners) {
-					tweener?.Kill();
+				foreach (Tween tween in existingState.tweens) {
+					tween?.Kill();
 				}
 
 				//Set the group to whatever final pos it had
@@ -200,9 +233,8 @@ namespace CUI {
 		}
 
 		private static IEnumerator HandleAnimationData(CUIAnimationState state) {
-			if (state.tweeners.Count <= 0) yield break;
-
-
+			if (state.tweens.Count <= 0 && !state.isInstant) yield break;
+			
 			//Add the new data to the list
 			currentAnimations.Add(state);
 
@@ -213,10 +245,19 @@ namespace CUI {
 			}
 
 			//Wait for the animation to complete
-			yield return new WaitForSeconds(state.animLength);
+			if (!state.isInstant) {
 
-			while (state.tweeners[0].active) {
-				yield return null;
+				//Preview for in-editor
+				if (!Application.isPlaying) {
+					CUITweenPreview.PrepareTweens(state.tweens);
+					CUITweenPreview.StartTweens();
+				}
+				
+				yield return new WaitForSeconds(state.animLength);
+				
+				while (state.tweens[0].active) {
+					yield return null;
+				}
 			}
 
 			//Check if it's still valid, if so remove it
@@ -225,22 +266,25 @@ namespace CUI {
 				state.cuiGroup.rectTransform.localPosition = state.finalPos;
 
 				//Disable the GO if needed
-				if (!state.isShowing) state.cuiGroup.gameObject.SetActive(false);
+				if (!state.isShowing && state.cuiGroup.disableCanvasWhenHidden) state.cuiGroup.gameObject.SetActive(false);
 
 				currentAnimations.Remove(state);
 			}
 		}
+		
 	}
 
 
 	public class CUIAnimationState {
-		public List<Tweener> tweeners = new List<Tweener>();
+		public List<Tween> tweens = new List<Tween>();
 
 		public float animLength = 0.3f;
 
 		public CUIGroup cuiGroup;
 		public bool isChangingVisibility = true;
 		public bool isShowing = true;
+
+		public bool isInstant = false;
 
 		public Vector3 finalPos;
 	}
@@ -263,6 +307,9 @@ namespace CUI {
 
 		FadeInRight,
 		FadeOutRight,
+		
+		InstantOut,
+		InstantIn
 	}
 
 	[Serializable]

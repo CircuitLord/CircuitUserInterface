@@ -17,14 +17,14 @@ namespace CUI.Actions {
 
 		
 
-		public static void Trigger(List<CUIAction> actions, bool instant = false, bool force = false) {
+		public static void Activate(List<CUIAction> actions, bool instant = false, bool force = false) {
 			foreach (CUIAction action in actions) {
 				if (action == null) continue;
 				action.Activate(instant, force);
 			}
 		}
 		
-		public static void Untrigger(List<CUIAction> actions, bool instant = false, bool force = false) {
+		public static void Deactivate(List<CUIAction> actions, bool instant = false, bool force = false) {
 			foreach (CUIAction action in actions) {
 				if (action == null) continue;
 				action.Deactivate(instant, force);

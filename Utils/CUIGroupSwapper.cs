@@ -13,12 +13,16 @@ namespace CUI.Utils {
 
 		[HideInInspector] public List<CUIGroup> groups = new List<CUIGroup>();
 
+		[SerializeField] private int defaultIndex = -1;
+		
 
 		[HideInInspector] public CUIGroup activeGroup;
 
 
 		private void Start() {
 			FindChildrenGroups();
+			
+			if (defaultIndex > -1) Swap(defaultIndex, true);
 		}
 
 		[Button]
@@ -40,16 +44,22 @@ namespace CUI.Utils {
 			Swap(groups[index]);
 		
 		}
+
+		public void Swap(int index, bool instant) {
+			Swap(groups[index], instant);
+		}
 	
-		public void Swap(CUIGroup newGroup) {
+		public void Swap(CUIGroup newGroup, bool instant = false) {
 
 			if (newGroup == activeGroup) return;
 		
 			if (activeGroup) {
-				CUIManager.SwapAnimate(activeGroup, newGroup);
+				if (instant) CUIManager.SwapAnimate(activeGroup, newGroup, -1f, CUIAnimation.InstantOut, CUIAnimation.InstantIn);
+				else CUIManager.SwapAnimate(activeGroup, newGroup);
 			}
 			else {
-				CUIManager.Animate(newGroup, true);
+				if (instant) CUIManager.Animate(newGroup, CUIAnimation.InstantIn);
+				else CUIManager.Animate(newGroup, true);
 			}
 		
 			activeGroup = newGroup;
