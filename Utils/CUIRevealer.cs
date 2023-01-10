@@ -20,7 +20,9 @@ namespace CUI.Utils {
 
 
 		private Coroutine reveal_C;
+#if UNITY_EDITOR
 		private EditorCoroutine reveal_EC;
+#endif
 
 		private void Start() {
 			if (!refreshChildrenEverytime) {
